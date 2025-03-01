@@ -3,12 +3,6 @@ variable "account_id" {
   type        = string
 }
 
-variable "api_token" {
-  description = "Cloudflare API Token"
-  type        = string
-  sensitive   = true
-}
-
 variable "azure_client_id" {
   description = "Azure AD Client ID"
   type        = string

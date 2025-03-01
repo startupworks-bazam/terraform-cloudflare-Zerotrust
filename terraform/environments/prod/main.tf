@@ -3,7 +3,7 @@ terraform {
   cloud {
     organization = "reddome_academy"
     workspaces {
-      name = "cloudflare-zerotrust-prod"
+      name = "terraform-cloudflare-Zerotrust"  # Updated workspace name
     }
   }
 
@@ -57,4 +57,15 @@ module "access" {
   app_domain     = "app.example.com"
   allowed_emails = ["user@example.com"]
   depends_on     = [cloudflare_teams_account.zero_trust]
+}
+
+module "idp" {
+  source = "../../modules/idp"
+
+  account_id          = var.account_id
+  azure_client_id     = var.azure_client_id
+  azure_client_secret = var.azure_client_secret
+  azure_directory_id  = var.azure_directory_id
+  
+  depends_on = [cloudflare_teams_account.zero_trust]
 }

@@ -5,7 +5,9 @@ resource "cloudflare_teams_rule" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = ["any"]
+  traffic {
+    any = true
+  }
 }
 
 # In modules/warp/main.tf
