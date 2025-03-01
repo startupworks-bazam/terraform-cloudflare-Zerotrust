@@ -1,4 +1,13 @@
 # In modules/device_posture/main.tf
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
+  }
+}
+
 resource "cloudflare_teams_device_posture_rule" "os_version" {
   account_id  = var.account_id
   name        = "OS Version Check"

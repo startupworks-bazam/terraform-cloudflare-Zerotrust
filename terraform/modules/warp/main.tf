@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
+  }
+}
+
 resource "cloudflare_teams_rule" "allow_all" {
   account_id  = var.account_id
   name        = "Allow All Traffic"
