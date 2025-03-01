@@ -1,8 +1,3 @@
-resource "cloudflare_teams_account" "warp" {
-  account_id = var.account_id
-  name       = var.warp_name
-}
-
 resource "cloudflare_teams_rule" "allow_all" {
   account_id  = var.account_id
   name        = "Allow All Traffic"
@@ -10,7 +5,7 @@ resource "cloudflare_teams_rule" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "any()"
+  traffic     = ["any"]
 }
 
 # In modules/warp/main.tf

@@ -1,7 +1,8 @@
+# Since we removed the teams_account resource, update the outputs
 output "teams_account_id" {
-  value = cloudflare_teams_account.warp.id
+  value = var.account_id
 }
 
 output "teams_name" {
-  value = cloudflare_teams_account.warp.name
+  value = var.warp_name
 }
