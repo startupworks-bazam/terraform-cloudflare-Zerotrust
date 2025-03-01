@@ -1,0 +1,18 @@
+resource "cloudflare_access_application" "app" {
+  account_id  = var.account_id
+  name        = var.app_name
+  domain      = var.app_domain
+  type        = "self_hosted"
+}
+
+resource "cloudflare_access_policy" "default_policy" {
+  account_id     = var.account_id
+  application_id = cloudflare_access_application.app.id
+  name           = "Default Policy"
+  precedence     = "1"
+  decision       = "allow"
+
+  include {
+    email = var.allowed_emails
+  }
+}
