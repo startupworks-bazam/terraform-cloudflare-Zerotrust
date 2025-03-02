@@ -15,10 +15,6 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   action      = "allow"
   filters     = ["dns"]
   traffic     = "any()"  # Corrected traffic expression
-  
-  rule_settings {
-    block_page_enabled = false
-  }
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
@@ -29,11 +25,6 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   action      = "block"
   filters     = ["dns"]
   traffic     = "any(dns.content_category[*] in {80})"  # Corrected traffic expression
-  
-  rule_settings {
-    block_page_enabled = true
-    block_page_reason  = "Your administrator has blocked your request."
-  }
 }
 
 # Block Security Threats
