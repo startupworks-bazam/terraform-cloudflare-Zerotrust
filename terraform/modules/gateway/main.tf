@@ -14,7 +14,7 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   
   # Fixed networks block syntax
   networks {
-    network = var.networks[0]
+    network = var.networks[0]  # Ensure the network is correctly specified
     # Removed incorrect description field
   }
 }
@@ -26,5 +26,5 @@ resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "any(dns.type)"  # Fixed traffic expression
+  traffic     = "any()"  # Corrected traffic expression
 }
