@@ -62,7 +62,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_windows
   }
   
   input {
-    integration_id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
+    id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
     compliance_status = "compliant"
   }
 }
@@ -79,28 +79,11 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_mac" {
   }
   
   input {
-    integration_id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
+    id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
     compliance_status = "compliant"
   }
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   account_id  = var.account_id
-  name        = "Device Posture Check"
-  description = "Enforce device posture requirements"
-  precedence  = 1
-  action      = "isolate"
-  filters     = ["http", "https"]
-  
-  # Use a valid traffic expression
-  traffic     = "http.request.hostname matches '.*'"
-  
-  device_posture = jsonencode({
-    integration_ids = [
-      cloudflare_zero_trust_device_posture_rule.os_version_windows.id,
-      cloudflare_zero_trust_device_posture_rule.disk_encryption.id,
-      cloudflare_zero_trust_device_posture_rule.intune_integration_windows.id,
-      cloudflare_zero_trust_device_posture_rule.intune_integration_mac.id
-    ]
-  })
-}
+  name
