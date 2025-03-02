@@ -46,6 +46,6 @@ resource "cloudflare_zero_trust_access_group" "security_teams" {
   name = "Security Teams"
   
   include {
-    group = ["reddome_red_team", "reddome_blue_team"]
+    email = ["user@reddome.org"]  # Same as other groups
   }
 }

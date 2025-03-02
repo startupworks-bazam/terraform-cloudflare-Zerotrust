@@ -26,9 +26,9 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
     }
   }
   
-  # Using a public subnet instead of private
+  # Using a smaller subnet that will be accepted
   networks {
-    network = "100.64.0.0/10"  # CGNAT range that should be accepted
+    network = "100.64.0.0/24"  # Smaller range
   }
 }
 
@@ -39,5 +39,5 @@ resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "any(dns.name[*] in {})"  # Corrected expression
+  traffic     = "dns.type in {'A' 'AAAA'}"  # Correct syntax for DNS
 }

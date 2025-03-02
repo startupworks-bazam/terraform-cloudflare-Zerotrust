@@ -14,7 +14,7 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "any(dns.name[*] in {})"  # Corrected expression
+  traffic     = "dns.type in {'A' 'AAAA' 'CNAME' 'TXT'}"  # Correct DNS syntax
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_malware" {

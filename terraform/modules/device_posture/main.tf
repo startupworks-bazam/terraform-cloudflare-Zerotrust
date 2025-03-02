@@ -62,9 +62,8 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_windows
   }
   
   input {
-    id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
+    integration_id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
     compliance_status = "compliant"
-    # Remove os field
   }
 }
 
@@ -80,9 +79,8 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_mac" {
   }
   
   input {
-    id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
+    integration_id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
     compliance_status = "compliant"
-    # Remove os field
   }
 }
 
