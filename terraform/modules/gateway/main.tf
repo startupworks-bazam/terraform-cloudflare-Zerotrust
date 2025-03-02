@@ -26,5 +26,5 @@ resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "any()"  # Corrected traffic expression
+  traffic = "dns.query_name matches '*'"
 }
