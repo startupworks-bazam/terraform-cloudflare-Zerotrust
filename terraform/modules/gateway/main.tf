@@ -10,13 +10,8 @@ terraform {
 # Changed from cloudflare_teams_location to cloudflare_zero_trust_dns_location
 resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
-  name       = var.location_name
-  
-  # Fixed networks block syntax
-  networks {
-    network = var.networks[0]  # Ensure the network is correctly specified
-    # Removed incorrect description field
-  }
+  name       = "Default Gateway"
+  networks   = ["192.168.1.0/24"]
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
