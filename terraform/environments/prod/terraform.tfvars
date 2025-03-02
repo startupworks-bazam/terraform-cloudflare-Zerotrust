@@ -1,0 +1,5 @@
+account_id          = "your-cloudflare-account-id"
+api_token           = "your-cloudflare-api-token"
+azure_client_id     = "your-azure-client-id"
+azure_client_secret = "your-azure-client-secret"
+azure_directory_id  = "your-azure-directory-id"
