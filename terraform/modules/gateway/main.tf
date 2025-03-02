@@ -11,7 +11,12 @@ terraform {
 resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = "Default Gateway"
-  networks   = ["192.168.1.0/24"]
+  networks = [
+    {
+      network = "192.168.1.0/24"
+      comment = "Local network"
+    }
+  ]
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
