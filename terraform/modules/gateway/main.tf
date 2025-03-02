@@ -11,17 +11,17 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
-  # Define the IP networks that this location covers
+  # Correct syntax for networks
   networks {
-    network = "192.168.1.0/24"  # Example: your internal network CIDR
+    network = "10.0.0.0/8"
   }
   
-  # You can add multiple networks
   networks {
-    network = "10.0.0.0/8"  # Example: another internal network
+    network = "192.168.1.0/24"
   }
   
-  client_default = false  # Set to true if this should be the default location
+  # Optionally set client_default
+  client_default = false
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
@@ -31,6 +31,6 @@ resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  # Per documentation, use this format:
-  traffic = "(dns.type in {A AAAA})"
+  # Correct syntax for traffic filter
+  traffic     = "dns.type in {\"A\" \"AAAA\"}"
 }

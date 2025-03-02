@@ -31,8 +31,11 @@ resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   precedence  = 1
   action      = "isolate"
   filters     = ["http", "https"]
-  device_posture = jsonencode({
-    integration_ids = [cloudflare_zero_trust_device_posture_rule.os_version_windows.id]
+  
+  # Use correct device posture syntax
+  traffic     = "has(device_posture.passed) && !device_posture.passed"
+  identity    = jsonencode({
+    id = [cloudflare_zero_trust_device_posture_rule.os_version_windows.id]
   })
 }
 

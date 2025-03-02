@@ -14,8 +14,8 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  # Per documentation:
-  traffic = "(dns.type in {A AAAA CNAME TXT})"
+  # Correct syntax
+  traffic     = "dns.type in {\"A\" \"AAAA\" \"CNAME\" \"TXT\"}"
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
@@ -25,8 +25,8 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   precedence  = 2
   action      = "block"
   filters     = ["dns"]
-  # Per documentation:
-  traffic = "(dns.content_category in {80})"
+  # Content category must use array syntax
+  traffic     = "any(dns.content_category[*] in {80})"
   rule_settings {
     block_page_enabled = true
     block_page_reason  = "Your administrator has blocked your request."
@@ -46,7 +46,6 @@ resource "cloudflare_zero_trust_gateway_policy" "block_security_threats" {
   traffic = "any(dns.security_category[*] in {80})"  # Security Threats category
 }
 
-# Block Streaming
 resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
   account_id  = var.account_id
   name        = "Block Unauthorized Streaming"
@@ -55,11 +54,10 @@ resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
   action      = "block"
   filters     = ["http"]
   
-  # Block streaming applications
-  traffic = "(application in {NETFLIX AMAZON_PRIME})"
+  # Use http.request.uri categories instead of application field
+  traffic     = "any(http.request.uri.content_category[*] in {96})"  # 96 is streaming media category
 }
 
-# CIPA Content Filtering
 resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   account_id  = var.account_id
   name        = "CIPA Content Filtering"
@@ -68,6 +66,6 @@ resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   action      = "block"
   filters     = ["dns", "http"]
   
-  # Target CIPA filter categories
-  traffic = "(dns.content_category in {1 4 5 6 7})"
+  # Use array syntax for content categories
+  traffic     = "any(http.request.uri.content_category[*] in {1 4 5 6 7})"
 }
