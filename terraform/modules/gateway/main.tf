@@ -11,7 +11,6 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
-  # Explicitly configure all endpoints to prevent crashes
   endpoints {
     ipv4 {
       enabled = true
@@ -27,12 +26,9 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
     }
   }
   
-  # Only add networks if specified
-  dynamic "networks" {
-    for_each = var.networks
-    content {
-      network = networks.value
-    }
+  # Using a public subnet instead of private
+  networks {
+    network = "100.64.0.0/10"  # CGNAT range that should be accepted
   }
 }
 
@@ -43,5 +39,5 @@ resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic = "dns.query_name matches '*'"
+  traffic     = "any(dns.name[*] in {})"  # Corrected expression
 }

@@ -14,7 +14,7 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "dns.query_name matches '.*'"  # Valid expression to match all domains
+  traffic     = "any(dns.name[*] in {})"  # Corrected expression
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_malware" {

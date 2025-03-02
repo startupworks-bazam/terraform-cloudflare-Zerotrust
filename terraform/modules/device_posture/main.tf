@@ -50,7 +50,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
   }
 }
 
-# Fix Windows Intune integration rule
+# Windows Intune integration rule
 resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_windows" {
   account_id  = var.account_id
   name        = "Microsoft Intune Compliance - Windows"
@@ -64,11 +64,11 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_windows
   input {
     id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
     compliance_status = "compliant"
-    os = "windows"  # Add OS specification
+    # Remove os field
   }
 }
 
-# Fix Mac Intune integration rule
+# Mac Intune integration rule
 resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_mac" {
   account_id  = var.account_id
   name        = "Microsoft Intune Compliance - Mac"
@@ -82,7 +82,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_mac" {
   input {
     id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
     compliance_status = "compliant"
-    os = "mac"  # Add OS specification
+    # Remove os field
   }
 }
 
