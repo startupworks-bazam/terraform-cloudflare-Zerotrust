@@ -7,16 +7,21 @@ terraform {
   }
 }
 
-# For gateway/main.tf
 resource "cloudflare_zero_trust_dns_location" "gateway" {
-  account_id = var.account_id
-  name       = var.location_name
-  
-  # Use a single IP string
-  ip = "192.168.1.0/24"
+  account_id    = var.account_id
+  name          = var.location_name
   client_default = false
+  
+  # Correct format for networks
+  networks {
+    network = "192.168.1.0/24"
+  }
+  
+  # If you have multiple networks, add them like this
+  # networks {
+  #   network = "10.0.0.0/8"
+  # }
 }
-
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   account_id  = var.account_id
   name        = "Default Gateway Policy"
