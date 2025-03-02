@@ -68,14 +68,13 @@ resource "cloudflare_zero_trust_gateway_policy" "warp_enrollment" {
   account_id  = var.account_id
   name        = "WARP Enrollment for Security Teams"
   description = "Allow WARP enrollment for red and blue team members"
-  precedence  = 10  # Higher precedence than general rules
+  precedence  = 10
   action      = "allow"
   filters     = ["http"]
   
-  # Target WARP enrollment URL
   traffic     = "http.request.host eq 'reddome.cloudflareaccess.com'"
   
-  identity {
-    groups = ["reddome_red_team", "reddome_blue_team"]
-  }
+  identity = jsonencode({
+    groups = [cloudflare_zero_trust_access_group.security_teams.id]
+  })
 }
