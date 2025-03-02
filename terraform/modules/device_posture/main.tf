@@ -50,7 +50,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
   }
 }
 
-# Windows Intune integration rule
+# Fix Windows Intune integration rule
 resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_windows" {
   account_id  = var.account_id
   name        = "Microsoft Intune Compliance - Windows"
@@ -63,11 +63,12 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_windows
   
   input {
     id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
-    compliance_status = "compliant"  # Added required field
+    compliance_status = "compliant"
+    os = "windows"  # Add OS specification
   }
 }
 
-# Mac Intune integration rule
+# Fix Mac Intune integration rule
 resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_mac" {
   account_id  = var.account_id
   name        = "Microsoft Intune Compliance - Mac"
@@ -80,11 +81,11 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_mac" {
   
   input {
     id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
-    compliance_status = "compliant"  # Added required field
+    compliance_status = "compliant"
+    os = "mac"  # Add OS specification
   }
 }
 
-# 3. Finally, define the policy that references all the rules
 resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   account_id  = var.account_id
   name        = "Device Posture Check"
@@ -93,10 +94,9 @@ resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   action      = "isolate"
   filters     = ["http", "https"]
   
-  # Use a proper filter expression based on your working example
-  traffic     = "http.request.uri eq true"
+  # Use a valid traffic expression
+  traffic     = "http.request.hostname matches '.*'"
   
-  # Update the references to match the resource names you defined
   device_posture = jsonencode({
     integration_ids = [
       cloudflare_zero_trust_device_posture_rule.os_version_windows.id,

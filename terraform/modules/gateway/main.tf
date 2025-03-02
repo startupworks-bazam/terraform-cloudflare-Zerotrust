@@ -7,16 +7,17 @@ terraform {
   }
 }
 
-# Changed from cloudflare_teams_location to cloudflare_zero_trust_dns_location
 resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
-  name       = "Default Gateway"
-  networks = [
-    {
-      network = "192.168.1.0/24"
-      comment = "Local network"
+  name       = var.location_name  # Use variable instead of hardcoded name
+  
+  dynamic "networks" {
+    for_each = var.networks
+    content {
+      network = networks.value
+      comment = "Managed by Terraform"
     }
-  ]
+  }
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
