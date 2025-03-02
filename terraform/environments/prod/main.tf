@@ -22,7 +22,7 @@ provider "cloudflare" {
 # Global Zero Trust configuration
 resource "cloudflare_teams_account" "zero_trust" {
   account_id = var.account_id
-  name       = "Zero Trust Configuration"
+  # Remove the name attribute as it's not supported
 }
 
 module "warp" {
