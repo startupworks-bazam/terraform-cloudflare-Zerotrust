@@ -75,6 +75,8 @@ resource "cloudflare_zero_trust_gateway_policy" "warp_enrollment" {
   traffic     = "http.request.host eq 'reddome.cloudflareaccess.com'"
   
   identity = jsonencode({
-    groups = [cloudflare_zero_trust_access_group.security_teams.id]
+    groups = [module.idp.security_teams_id]
   })
+  
+  depends_on = [module.idp]
 }
