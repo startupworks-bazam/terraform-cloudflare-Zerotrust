@@ -42,7 +42,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
 resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
   account_id  = var.account_id
   name        = "Disk Encryption Check"
-  description = "Verify devices have disk encryption enabled"
+  description = "Ensure device disk is encrypted"
   type        = "disk_encryption"
   
   match {

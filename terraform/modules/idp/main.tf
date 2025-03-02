@@ -21,6 +21,21 @@ resource "cloudflare_zero_trust_access_identity_provider" "microsoft_entra_id" {
   }
 }
 
+resource "cloudflare_zero_trust_access_identity_provider" "azure_ad" {
+  account_id = var.account_id
+  name       = "Azure AD"
+  type       = "azureAD"  # Changed from "azure" to "azureAD"
+  config {
+    client_id     = var.azure_client_id
+    client_secret = var.azure_client_secret
+    directory_id  = var.azure_directory_id
+  }
+}
+
+output "entra_idp_id" {
+  value = cloudflare_zero_trust_access_identity_provider.azure_ad.id
+}
+
 # Basic access groups without Azure integration for now
 resource "cloudflare_zero_trust_access_group" "blue_team" {
   account_id = var.account_id
