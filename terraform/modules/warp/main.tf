@@ -46,7 +46,7 @@ resource "cloudflare_zero_trust_gateway_policy" "block_security_threats" {
   traffic = "any(dns.security_category[*] in {80})"  # Security Threats category
 }
 
-# Block Streaming (updated group names)
+# Block Streaming
 resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
   account_id  = var.account_id
   name        = "Block Unauthorized Streaming"
@@ -57,25 +57,9 @@ resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
   
   # Block streaming applications
   traffic = "any(application[*] in {'Netflix', 'Amazon Prime Video'})"
-  
-  # Updated group syntax
-  identity {
-    id = [var.azure_ad_provider_id]
-    email_list = []
-    groups = [
-      {
-        id = var.azure_ad_provider_id
-        name = "reddome_blue_team"
-      },
-      {
-        id = var.azure_ad_provider_id
-        name = "reddome_red_team"
-      }
-    ]
-  }
 }
 
-# CIPA Content Filtering (updated group names)
+# CIPA Content Filtering
 resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   account_id  = var.account_id
   name        = "CIPA Content Filtering"
@@ -86,101 +70,4 @@ resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   
   # Target CIPA filter categories
   traffic = "any(dns.content_category[*] in {'Adult Content', 'Gambling', 'Weapons', 'Drugs', 'Pornography'})"
-  
-  # Updated group syntax
-  identity {
-    id = [var.azure_ad_provider_id]
-    groups = [
-      {
-        id = var.azure_ad_provider_id
-        name = "reddome_blue_team"
-      },
-      {
-        id = var.azure_ad_provider_id
-        name = "reddome_red_team"
-      }
-    ]
-  }
-}
-
-# Blue Team WARP settings
-resource "cloudflare_zero_trust_device_settings" "warp_settings_blue" {
-  account_id = var.account_id
-  
-  # Enable captive portal detection
-  captive_portal {
-    enable  = true
-    timeout = 300
-  }
-  
-  # Disable client tampering
-  allow_mode_switch = false
-  allow_updates     = true
-  switch_locked     = true
-  
-  # Enable admin override with OTP
-  auto_connect = 3600  # Auto-connect timeout
-  
-  # Install Cloudflare CA certificate
-  root_certificate {
-    enabled = true
-  }
-  
-  # Updated group syntax
-  identity {
-    id = [var.azure_ad_provider_id]
-    groups = [
-      {
-        id = var.azure_ad_provider_id
-        name = "reddome_blue_team"
-      }
-    ]
-  }
-}
-
-# Red Team settings with TLS inspection enabled
-resource "cloudflare_zero_trust_device_settings" "warp_settings_red" {
-  account_id = var.account_id
-  
-  # Base settings similar to default
-  captive_portal {
-    enable  = true
-    timeout = 300
-  }
-  
-  switch_locked = true
-  allow_updates = true
-  
-  # Enable TLS inspection for Red Team (formerly US users)
-  tls_decrypt {
-    enabled = true
-  }
-  
-  # Updated group syntax
-  identity {
-    id = [var.azure_ad_provider_id]
-    groups = [
-      {
-        id = var.azure_ad_provider_id
-        name = "reddome_red_team"
-      }
-    ]
-  }
-}
-
-# Enable TLS decryption for traffic inspection
-resource "cloudflare_zero_trust_gateway_settings" "tls_settings" {
-  account_id = var.account_id
-  
-  # Enable TLS decryption
-  tls {
-    enable = true
-  }
-  
-  # Enable antivirus scanning
-  antivirus {
-    enabled_download_scan = true
-    enabled_upload_scan   = true
-    block_unscannable     = true
-  }
 }
