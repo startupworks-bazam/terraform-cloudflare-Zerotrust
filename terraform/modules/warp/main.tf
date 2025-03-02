@@ -27,4 +27,22 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   filters     = ["dns"]
   # Per documentation:
   traffic     = "all(dns.content_category in {80})"
+  rule_settings {
+    block_page_enabled = true
+    block_page_reason  = "Your administrator has blocked your request."
+  }
+}
+
+resource "cloudflare_zero_trust_gateway_policy" "unwanted" {
+  account_id  = var.account_id
+  name        = "Block Unwanted Sites (CIPA)"
+  description = "block all websites thats not required for the business"
+  precedence  = 10
+  action      = "block"
+  filters     = ["http"]
+  traffic     = "any(http.request.uri.content_category[*] in {182})"
+  rule_settings {
+    block_page_enabled = true
+    block_page_reason  = "Your administrator has blocked your request."
+  }
 }
