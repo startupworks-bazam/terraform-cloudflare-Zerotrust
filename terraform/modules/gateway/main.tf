@@ -11,16 +11,27 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
+  # Explicitly configure all endpoints to prevent crashes
+  endpoints {
+    ipv4 {
+      enabled = true
+    }
+    ipv6 {
+      enabled = false
+    }
+    doh {
+      enabled = false
+    }
+    dot {
+      enabled = false
+    }
+  }
+  
+  # Only add networks if specified
   dynamic "networks" {
     for_each = var.networks
     content {
       network = networks.value
-    }
-  }
-  
-  endpoints {
-    ipv4 {
-      enabled = true
     }
   }
 }
