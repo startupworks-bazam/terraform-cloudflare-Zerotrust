@@ -14,7 +14,7 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "any()"
+  traffic = "dns.type == 'ANY'"
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
@@ -24,5 +24,5 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   precedence  = 2
   action      = "block"
   filters     = ["dns"]
-  traffic     = "security.category in {80}"  # Security Threats category
+  traffic     = "any(dns.content_category[*] in {80})"  # Updated syntax
 }

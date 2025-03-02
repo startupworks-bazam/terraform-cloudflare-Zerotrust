@@ -49,8 +49,8 @@ module "access" {
   source = "../../modules/access"
   account_id     = var.account_id
   app_name       = "Example App"
-  app_domain     = "app.example.com"
-  allowed_emails = ["user@example.com"]
+  app_domain     = "reddome.cloudflareaccess.com"  # Replace with a domain you own in Cloudflare
+  allowed_emails = ["user@reddome.org"]
   depends_on     = [cloudflare_zero_trust_gateway_settings.zero_trust]
 }
 

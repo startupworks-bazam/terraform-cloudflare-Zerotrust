@@ -11,6 +11,7 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
+  # Fixed networks configuration - iterate through each network in var.networks
   dynamic "networks" {
     for_each = var.networks
     content {
@@ -26,5 +27,5 @@ resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "any()"
+  traffic     = "dns.type == 'ANY'"
 }
