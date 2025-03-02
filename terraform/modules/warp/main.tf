@@ -14,7 +14,7 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "any(true)"  # Changed from block syntax to string expression
+  traffic     = "any(dns.type)"  # Fixed traffic expression
   
   rule_settings {
     block_page_enabled = false
@@ -28,7 +28,7 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   precedence  = 2
   action      = "block"
   filters     = ["dns"]
-  traffic     = "security.category in {80}"  # Changed to correct expression
+  traffic     = "any(dns.content_category[*] in {80})"  # Fixed security category expression
   rule_settings {
     block_page_enabled = true
     block_page_reason  = "Your administrator has blocked your request."
