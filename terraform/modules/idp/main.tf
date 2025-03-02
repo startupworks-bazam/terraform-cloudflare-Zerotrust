@@ -22,7 +22,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "microsoft_entra_id" {
   }
 }
 
-# Updated access groups for IDP module
+# Updated access groups for IDP module using correct group syntax
 resource "cloudflare_zero_trust_access_group" "blue_team" {
   account_id = var.account_id
   name       = "Blue Team"
@@ -30,7 +30,9 @@ resource "cloudflare_zero_trust_access_group" "blue_team" {
   include {
     azure {
       id = [cloudflare_zero_trust_access_identity_provider.microsoft_entra_id.id]
-      name = ["reddome_blue_team"]
+      identity_provider_id = cloudflare_zero_trust_access_identity_provider.microsoft_entra_id.id
+      # Using the ID instead of name for group reference
+      groups = ["reddome_blue_team"]
     }
   }
 }
@@ -42,7 +44,9 @@ resource "cloudflare_zero_trust_access_group" "red_team" {
   include {
     azure {
       id = [cloudflare_zero_trust_access_identity_provider.microsoft_entra_id.id]
-      name = ["reddome_red_team"]
+      identity_provider_id = cloudflare_zero_trust_access_identity_provider.microsoft_entra_id.id
+      # Using the ID instead of name for group reference
+      groups = ["reddome_red_team"]
     }
   }
 }

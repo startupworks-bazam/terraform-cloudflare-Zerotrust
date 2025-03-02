@@ -58,11 +58,20 @@ resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
   # Block streaming applications
   traffic = "any(application[*] in {'Netflix', 'Amazon Prime Video'})"
   
-  # Updated group names
+  # Updated group syntax
   identity {
     id = [var.azure_ad_provider_id]
     email_list = []
-    group_list = ["reddome_blue_team", "reddome_red_team"]
+    groups = [
+      {
+        id = var.azure_ad_provider_id
+        name = "reddome_blue_team"
+      },
+      {
+        id = var.azure_ad_provider_id
+        name = "reddome_red_team"
+      }
+    ]
   }
 }
 
@@ -78,10 +87,19 @@ resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   # Target CIPA filter categories
   traffic = "any(dns.content_category[*] in {'Adult Content', 'Gambling', 'Weapons', 'Drugs', 'Pornography'})"
   
-  # Updated group names
+  # Updated group syntax
   identity {
     id = [var.azure_ad_provider_id]
-    group_list = ["reddome_blue_team", "reddome_red_team"]
+    groups = [
+      {
+        id = var.azure_ad_provider_id
+        name = "reddome_blue_team"
+      },
+      {
+        id = var.azure_ad_provider_id
+        name = "reddome_red_team"
+      }
+    ]
   }
 }
 
@@ -108,10 +126,15 @@ resource "cloudflare_zero_trust_device_settings" "warp_settings_blue" {
     enabled = true
   }
   
-  # Apply to Blue Team
+  # Updated group syntax
   identity {
     id = [var.azure_ad_provider_id]
-    group_list = ["reddome_blue_team"]
+    groups = [
+      {
+        id = var.azure_ad_provider_id
+        name = "reddome_blue_team"
+      }
+    ]
   }
 }
 
@@ -133,10 +156,15 @@ resource "cloudflare_zero_trust_device_settings" "warp_settings_red" {
     enabled = true
   }
   
-  # Apply to Red Team
+  # Updated group syntax
   identity {
     id = [var.azure_ad_provider_id]
-    group_list = ["reddome_red_team"]
+    groups = [
+      {
+        id = var.azure_ad_provider_id
+        name = "reddome_red_team"
+      }
+    ]
   }
 }
 
