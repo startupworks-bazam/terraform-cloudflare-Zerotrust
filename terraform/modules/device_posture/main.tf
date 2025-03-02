@@ -32,12 +32,16 @@ resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   action      = "isolate"
   filters     = ["http", "https"]
   
-  # Use simpler traffic expression
-  traffic = "(http.request.uri)"
+  # Use a proper filter expression based on your working example
+  traffic     = "http.request.uri eq true"
   
-  # Use identity as an argument, not a block
-  identity = jsonencode({
-    id = [cloudflare_zero_trust_device_posture_rule.os_version_windows.id]
+  # Use device_posture instead of identity
+  device_posture = jsonencode({
+    integration_ids = [
+      cloudflare_zero_trust_device_posture_rule.os_version_windows.id,
+      cloudflare_zero_trust_device_posture_rule.disk_encryption.id,
+      cloudflare_zero_trust_device_posture_rule.intune_integration.id
+    ]
   })
 }
 
@@ -53,17 +57,31 @@ resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
   }
 }
 
-# Comment out or remove the Intune integration rule until we can properly configure it
-# Microsoft Intune Integration - disabled temporarily
-# resource "cloudflare_zero_trust_device_posture_rule" "intune_integration" {
-#   account_id  = var.account_id
-#   name        = "Microsoft Intune Compliance"
-#   description = "Verify device compliance with Intune policies via ZTNAPostureChecks app"
-#   type        = "intune"
-#   
-#   match {
-#     platform = "all"
-#   }
-#   
-#   # We'll need to check Cloudflare documentation for the exact field names
-# }
+# Add this Intune integration resource
+resource "cloudflare_zero_trust_device_posture_integration" "intune_integration" {
+  account_id = var.account_id
+  name       = "Microsoft Intune Integration"
+  type       = "intune"
+  interval   = "10m"
+  
+  config = {
+    client_id     = var.intune_client_id
+    client_secret = var.intune_client_secret
+    customer_id   = var.azure_tenant_id
+  }
+}
+
+# Then uncomment and update the Intune posture rule
+resource "cloudflare_zero_trust_device_posture_rule" "intune_integration" {
+  account_id  = var.account_id
+  name        = "Microsoft Intune Compliance"
+  description = "Verify device compliance with Intune policies"
+  type        = "intune"
+  
+  match {
+    platform = "all"
+  }
+  
+  # Link to the integration
+  integration_uid = cloudflare_zero_trust_device_posture_integration.intune_integration.id
+}

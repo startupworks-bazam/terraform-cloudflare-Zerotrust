@@ -11,13 +11,9 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
-  # Proper syntax for defining networks
-  dynamic "networks" {
-    for_each = var.networks
-    content {
-      network = networks.value
-    }
-  }
+  # Define a single network directly
+  ip = ["192.168.1.0/24"]
+  client_default = false
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
@@ -28,9 +24,10 @@ resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   action      = "allow"
   filters     = ["dns"]
   
-  # Correct syntax based on Cloudflare provider
-  traffic = "(http.request.uri)"  # This is a basic expression that matches all HTTP traffic
+  # Similar format to your working CIPA filter
+  traffic     = "any(http.request.uri.content_category[*] in {1})"  # This is a placeholder, use appropriate category ID
   
-  # If you need to filter DNS, try:
-  # traffic = "(dns)"
+  rule_settings {
+    block_page_enabled = false
+  }
 }

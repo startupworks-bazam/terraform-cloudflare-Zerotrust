@@ -15,8 +15,12 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   action      = "allow"
   filters     = ["dns"]
   
-  # Simplest expression to match all DNS traffic
-  traffic = "(dns)"
+  # Using the same pattern as your working CIPA filter
+  traffic     = "any(http.request.uri.content_category[*] in {1 2 3 4})"  # This matches several content categories
+  
+  rule_settings {
+    block_page_enabled = false
+  }
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
