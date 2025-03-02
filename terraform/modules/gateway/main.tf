@@ -7,12 +7,13 @@ terraform {
   }
 }
 
+# For gateway/main.tf
 resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
-  # Define a single network directly
-  ip = ["192.168.1.0/24"]
+  # Use a single IP string
+  ip = "192.168.1.0/24"
   client_default = false
 }
 

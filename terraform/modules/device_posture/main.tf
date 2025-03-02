@@ -58,13 +58,14 @@ resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
 }
 
 # Add this Intune integration resource
+# For device_posture/main.tf
 resource "cloudflare_zero_trust_device_posture_integration" "intune_integration" {
   account_id = var.account_id
   name       = "Microsoft Intune Integration"
   type       = "intune"
   interval   = "10m"
   
-  config = {
+  config {
     client_id     = var.intune_client_id
     client_secret = var.intune_client_secret
     customer_id   = var.azure_tenant_id
@@ -82,6 +83,6 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration" {
     platform = "all"
   }
   
-  # Link to the integration
-  integration_uid = cloudflare_zero_trust_device_posture_integration.intune_integration.id
+  # Use the correct attribute name
+  integration_id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
 }
