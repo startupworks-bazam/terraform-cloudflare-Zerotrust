@@ -1,16 +1,21 @@
+# terraform/modules/idp/variables.tf
 variable "account_id" {
   description = "Cloudflare Account ID"
   type        = string
 }
 
-variable "warp_name" {
-  description = "Name for the WARP configuration"
+variable "azure_client_id" {
+  description = "Microsoft Entra ID Client ID"
   type        = string
-  default     = "Default WARP Configuration"
 }
 
-variable "azure_ad_provider_id" {
-  description = "ID of the Azure AD identity provider created in Cloudflare"
+variable "azure_client_secret" {
+  description = "Microsoft Entra ID Client Secret"
   type        = string
-  default     = ""  # Making it optional with default empty string
+  sensitive   = true
+}
+
+variable "azure_directory_id" {
+  description = "Microsoft Entra ID Directory ID (Tenant ID)"
+  type        = string
 }
