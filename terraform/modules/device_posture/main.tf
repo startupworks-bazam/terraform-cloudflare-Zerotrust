@@ -18,7 +18,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "os_version" {
   }
   
   input {
-    version = ">=19045.5555"
+    version = ">=10.0"
   }
 }
 

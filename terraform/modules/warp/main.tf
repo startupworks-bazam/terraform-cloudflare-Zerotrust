@@ -14,7 +14,8 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "true"  # Simplest expression that will match everything
+  # Per documentation:
+  traffic     = "all(dns.type in {A, AAAA, CNAME, TXT})"
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
@@ -24,5 +25,6 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   precedence  = 2
   action      = "block"
   filters     = ["dns"]
-  traffic     = "any(dns.content_category[*] in {80})"  # Updated syntax
+  # Per documentation:
+  traffic     = "all(dns.content_category in {80})"
 }
