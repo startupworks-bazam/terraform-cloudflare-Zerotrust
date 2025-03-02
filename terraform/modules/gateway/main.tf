@@ -11,8 +11,11 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
-  networks {
-    network = var.networks
+  dynamic "networks" {
+    for_each = var.networks
+    content {
+      network = networks.value
+    }
   }
 }
 

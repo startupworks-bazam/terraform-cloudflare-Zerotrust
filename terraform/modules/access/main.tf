@@ -7,24 +7,21 @@ terraform {
   }
 }
 
-resource "cloudflare_zero_trust_dns_location" "gateway" {
-  account_id = var.account_id
-  name       = var.location_name
-  
-  dynamic "networks" {
-    for_each = var.networks
-    content {
-      network = networks.value
-    }
-  }
+resource "cloudflare_zero_trust_access_application" "app" {
+  account_id  = var.account_id
+  name        = var.app_name
+  domain      = var.app_domain
+  type        = "self_hosted"
 }
 
-resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
-  account_id  = var.account_id
-  name        = "Default Gateway Policy"
-  description = "Default policy for gateway traffic"
-  precedence  = 1
-  action      = "allow"
-  filters     = ["dns"]
-  traffic     = "any()"
+resource "cloudflare_zero_trust_access_policy" "default_policy" {
+  account_id     = var.account_id
+  application_id = cloudflare_zero_trust_access_application.app.id
+  name           = "Default Policy"
+  precedence     = 1
+  decision       = "allow"
+
+  include {
+    email = var.allowed_emails
+  }
 }
