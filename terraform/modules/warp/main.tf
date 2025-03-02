@@ -83,8 +83,6 @@ resource "cloudflare_zero_trust_access_policy" "warp_enrollment_policy" {
   precedence = 1
   
   include {
-    email = ["user@reddome.org"] # Use this for initial setup
-    email_domain = ["company.com"]
-    azure_groups = ["reddome_red_team", "reddome_blue_team"]  # Changed from azure_group to azure_groups
+    azure_groups = ["a3008467-e39c-43f6-a7ad-4769bcefe01e", "5a071d2a-8597-4096-a6b3-1d702cfab3c4"]  # Changed from azure_group to azure_groups
   }
 }
