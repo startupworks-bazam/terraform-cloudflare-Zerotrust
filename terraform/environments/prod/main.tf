@@ -24,17 +24,21 @@ resource "cloudflare_zero_trust_gateway_settings" "zero_trust" {
   account_id = var.account_id
 }
 
+module "device_posture" {
+  source = "../../modules/device_posture"
+  account_id = var.account_id
+  intune_client_id = var.intune_client_id
+  intune_client_secret = var.intune_client_secret
+  azure_tenant_id = var.azure_directory_id
+  depends_on = [cloudflare_zero_trust_gateway_settings.zero_trust]
+}
+
 module "warp" {
   source = "../../modules/warp"
   account_id = var.account_id
   warp_name  = "Prod WARP Configuration"
-  depends_on = [cloudflare_zero_trust_gateway_settings.zero_trust]
-}
-
-module "device_posture" {
-  source = "../../modules/device_posture"
-  account_id = var.account_id
-  depends_on = [cloudflare_zero_trust_gateway_settings.zero_trust]
+  azure_ad_provider_id = module.idp.entra_idp_id
+  depends_on = [cloudflare_zero_trust_gateway_settings.zero_trust, module.idp]
 }
 
 module "gateway" {

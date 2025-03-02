@@ -11,12 +11,13 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
-  # According to documentation, networks is properly structured like this:
-  networks {
-    network = var.networks[0]
+  dynamic "networks" {
+    for_each = var.networks
+    content {
+      network = networks.value
+    }
   }
 }
-
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   account_id  = var.account_id
   name        = "Default Gateway Policy"

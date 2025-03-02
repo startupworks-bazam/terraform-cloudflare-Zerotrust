@@ -33,20 +33,7 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   }
 }
 
-resource "cloudflare_zero_trust_gateway_policy" "unwanted" {
-  account_id  = var.account_id
-  name        = "Block Unwanted Sites (CIPA)"
-  description = "block all websites thats not required for the business"
-  precedence  = 10
-  action      = "block"
-  filters     = ["http"]
-  traffic     = "any(http.request.uri.content_category[*] in {182})"
-  rule_settings {
-    block_page_enabled = true
-    block_page_reason  = "Your administrator has blocked your request."
-  }
-}
-# Block Malware and Security Threats
+# Block Security Threats
 resource "cloudflare_zero_trust_gateway_policy" "block_security_threats" {
   account_id  = var.account_id
   name        = "Block Security Threats"
@@ -59,7 +46,7 @@ resource "cloudflare_zero_trust_gateway_policy" "block_security_threats" {
   traffic = "any(dns.security_category[*] in {80})"  # Security Threats category
 }
 
-# Block Unauthorized Applications (Streaming Platforms)
+# Block Streaming (updated group names)
 resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
   account_id  = var.account_id
   name        = "Block Unauthorized Streaming"
@@ -71,15 +58,15 @@ resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
   # Block streaming applications
   traffic = "any(application[*] in {'Netflix', 'Amazon Prime Video'})"
   
-  # Reference Azure AD group for UK Users
+  # Updated group names
   identity {
     id = [var.azure_ad_provider_id]
     email_list = []
-    group_list = ["Cloudflare_Warp_Users"]  # Using exact group name from Entra
+    group_list = ["reddome_blue_team", "reddome_red_team"]
   }
 }
 
-# CIPA Content Filtering
+# CIPA Content Filtering (updated group names)
 resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   account_id  = var.account_id
   name        = "CIPA Content Filtering"
@@ -91,34 +78,15 @@ resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   # Target CIPA filter categories
   traffic = "any(dns.content_category[*] in {'Adult Content', 'Gambling', 'Weapons', 'Drugs', 'Pornography'})"
   
-  # Apply to all users
+  # Updated group names
   identity {
     id = [var.azure_ad_provider_id]
-    group_list = ["Cloudflare_Warp_Users", "Cloudflare_Warp_US_Users"]
+    group_list = ["reddome_blue_team", "reddome_red_team"]
   }
 }
 
-# Block Unapproved File Sharing (Testing with InfoSec team)
-resource "cloudflare_zero_trust_gateway_policy" "block_file_upload" {
-  account_id  = var.account_id
-  name        = "Block Unapproved File Sharing"
-  description = "Block file uploads to unapproved platforms"
-  precedence  = 4
-  action      = "block"
-  filters     = ["http"]
-  
-  # Detect and block file uploads to unauthorized services
-  traffic = "http.request.method == 'POST' and any(http.request.file.name[*] exists) and any(application[*] in {'Dropbox', 'Cyberduck', 'WeTransfer'})"
-  
-  # Only apply to InfoSec group for testing
-  identity {
-    id = [var.azure_ad_provider_id]
-    group_list = ["InfoSec"]  # Using the temp testing group from Entra
-  }
-}
-
-# Default WARP client configurations
-resource "cloudflare_zero_trust_device_settings" "warp_settings" {
+# Blue Team WARP settings
+resource "cloudflare_zero_trust_device_settings" "warp_settings_blue" {
   account_id = var.account_id
   
   # Enable captive portal detection
@@ -140,15 +108,15 @@ resource "cloudflare_zero_trust_device_settings" "warp_settings" {
     enabled = true
   }
   
-  # Apply to UK users group
+  # Apply to Blue Team
   identity {
     id = [var.azure_ad_provider_id]
-    group_list = ["Cloudflare_Warp_Users"]
+    group_list = ["reddome_blue_team"]
   }
 }
 
-# US-specific settings with TLS inspection enabled
-resource "cloudflare_zero_trust_device_settings" "warp_settings_us" {
+# Red Team settings with TLS inspection enabled
+resource "cloudflare_zero_trust_device_settings" "warp_settings_red" {
   account_id = var.account_id
   
   # Base settings similar to default
@@ -160,15 +128,15 @@ resource "cloudflare_zero_trust_device_settings" "warp_settings_us" {
   switch_locked = true
   allow_updates = true
   
-  # Enable TLS inspection for US users
+  # Enable TLS inspection for Red Team (formerly US users)
   tls_decrypt {
     enabled = true
   }
   
-  # Apply to US users group
+  # Apply to Red Team
   identity {
     id = [var.azure_ad_provider_id]
-    group_list = ["Cloudflare_Warp_US_Users"]
+    group_list = ["reddome_red_team"]
   }
 }
 
@@ -181,7 +149,7 @@ resource "cloudflare_zero_trust_gateway_settings" "tls_settings" {
     enable = true
   }
   
-  # Enable antivirus scanning as shown in your document
+  # Enable antivirus scanning
   antivirus {
     enabled_download_scan = true
     enabled_upload_scan   = true

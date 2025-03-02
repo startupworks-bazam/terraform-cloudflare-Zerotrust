@@ -40,6 +40,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
   }
 }
 
+# Fix the reference to os_version_windows
 resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   account_id  = var.account_id
   name        = "Device Posture Check"
@@ -48,7 +49,7 @@ resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   action      = "isolate"
   filters     = ["http", "https"]
   device_posture = jsonencode({
-    integration_ids = [cloudflare_zero_trust_device_posture_rule.os_version.id]
+    integration_ids = [cloudflare_zero_trust_device_posture_rule.os_version_windows.id]
   })
 }
 

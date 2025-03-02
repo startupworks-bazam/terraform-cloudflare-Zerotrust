@@ -8,3 +8,8 @@ variable "warp_name" {
   type        = string
   default     = "Default WARP Configuration"
 }
+
+variable "azure_ad_provider_id" {
+  description = "ID of the Azure AD identity provider created in Cloudflare"
+  type        = string
+}
