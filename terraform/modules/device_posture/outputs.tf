@@ -1,3 +1,3 @@
 output "rule_id" {
-  value = cloudflare_teams_rule.device_posture.id
+  value = cloudflare_zero_trust_gateway_policy.device_posture.id
 }

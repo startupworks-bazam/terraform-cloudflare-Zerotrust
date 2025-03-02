@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "cloudflare_teams_rule" "allow_all" {
+resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   account_id  = var.account_id
   name        = "Allow All Traffic"
   description = "Allow all traffic through WARP"
@@ -17,7 +17,7 @@ resource "cloudflare_teams_rule" "allow_all" {
   traffic     = "any()"
 }
 
-resource "cloudflare_teams_rule" "block_malware" {
+resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   account_id  = var.account_id
   name        = "Block Malware"
   description = "Block known malware domains"

@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "cloudflare_device_posture_rule" "os_version" {
+resource "cloudflare_zero_trust_device_posture_rule" "os_version" {
   account_id  = var.account_id
   name        = "OS Version Check"
   description = "Ensure devices are running up-to-date OS versions"
@@ -22,7 +22,7 @@ resource "cloudflare_device_posture_rule" "os_version" {
   }
 }
 
-resource "cloudflare_teams_rule" "device_posture" {
+resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   account_id  = var.account_id
   name        = "Device Posture Check"
   description = "Enforce device posture requirements"
@@ -30,6 +30,6 @@ resource "cloudflare_teams_rule" "device_posture" {
   action      = "isolate"
   filters     = ["http", "https"]
   device_posture = jsonencode({
-    integration_ids = [cloudflare_device_posture_rule.os_version.id]
+    integration_ids = [cloudflare_zero_trust_device_posture_rule.os_version.id]
   })
 }
