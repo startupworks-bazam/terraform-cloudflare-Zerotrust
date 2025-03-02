@@ -14,7 +14,7 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic     = "dns"
+  traffic     = "any()"  # Corrected traffic expression
   
   rule_settings {
     block_page_enabled = false
@@ -28,7 +28,7 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   precedence  = 2
   action      = "block"
   filters     = ["dns"]
-  traffic     = "dns.content_category == 'Malware'"
+  traffic     = "any(dns.content_category[*] in {80})"  # Corrected traffic expression
   
   rule_settings {
     block_page_enabled = true
