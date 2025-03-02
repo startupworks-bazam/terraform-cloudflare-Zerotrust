@@ -11,10 +11,15 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
- networks {
-  for_each = var.networks
-  content {
-    network = each.value
+  # The correct syntax based on Cloudflare provider documentation
+  client_default = true
+  
+  # For each network in the var.networks list
+  dynamic "ip_rules" {
+    for_each = var.networks
+    content {
+      ip = ip_rules.value
+    }
   }
 }
 
