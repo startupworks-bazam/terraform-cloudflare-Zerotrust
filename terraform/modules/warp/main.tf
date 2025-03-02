@@ -24,5 +24,5 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   precedence  = 2
   action      = "block"
   filters     = ["dns"]
-  traffic     = "cf.threat_category == 'malware'"  # Use proper Cloudflare filtering syntax
+  traffic     = "any(dns.content_category[*] in {80})"  # Updated syntax
 }
