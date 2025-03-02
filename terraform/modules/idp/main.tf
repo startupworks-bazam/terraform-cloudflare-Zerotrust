@@ -39,3 +39,13 @@ resource "cloudflare_zero_trust_access_group" "red_team" {
     email = ["user@reddome.org"]
   }
 }
+
+# Add the security groups to the Entra ID configuration
+resource "cloudflare_access_group" "security_teams" {
+  account_id = var.account_id
+  name = "Security Teams"
+  
+  include {
+    azure_group = ["reddome_red_team", "reddome_blue_team"]
+  }
+}
