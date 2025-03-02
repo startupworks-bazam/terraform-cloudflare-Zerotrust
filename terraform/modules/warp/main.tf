@@ -64,18 +64,25 @@ resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   traffic     = "any(http.request.uri.content_category[*] in {1 4 5 6 7})"
 }
 
-# Remove the module reference that's causing issues
-resource "cloudflare_zero_trust_gateway_policy" "warp_enrollment" {
-  account_id  = var.account_id
-  name        = "WARP Enrollment for Security Teams"
-  description = "Allow WARP enrollment for red and blue team members"
-  precedence  = 10
-  action      = "allow"
-  filters     = ["http"]
+resource "cloudflare_zero_trust_access_application" "warp_enrollment_app" {
+  account_id = var.account_id
+  session_duration = "18h"
+  name = "Warp device enrollment"
+  allowed_idps = [var.azure_ad_provider_id]
+  auto_redirect_to_identity = true
+  type = "warp"
+  app_launcher_visible = false
+}
+
+resource "cloudflare_zero_trust_access_policy" "warp_enrollment_policy" {
+  application_id = cloudflare_zero_trust_access_application.warp_enrollment_app.id
+  account_id = var.account_id
+  name = "Allow Security Teams"
+  decision = "allow"
+  precedence = 1
   
-  traffic     = "http.request.host eq 'reddome.cloudflareaccess.com'"
-  
-  identity = jsonencode({
-    groups = [var.security_teams_id]
-  })
+  include {
+    email = ["user@reddome.org"] # Use this for initial setup
+    # You can update this later to use Azure AD groups once integration is working
+  }
 }
