@@ -34,3 +34,15 @@ variable "azure_ad_provider_id" {
   description = "ID of the Azure AD identity provider created in Cloudflare"
   type        = string
 }
+
+variable "api_token" {
+  description = "Cloudflare API Token with Zero Trust permissions"
+  type        = string
+  sensitive   = true
+}
+
+variable "azure_ad_provider_id" {
+  description = "ID of the Azure AD identity provider created in Cloudflare"
+  type        = string
+  default     = ""  # Add default value
+}
