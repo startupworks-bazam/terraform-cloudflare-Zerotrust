@@ -7,15 +7,16 @@ terraform {
   }
 }
 
-resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
-  account_id  = var.account_id
-  name        = "Allow All Traffic"
-  description = "Allow all traffic through WARP"
-  precedence  = 1
-  action      = "allow"
-  filters     = ["dns"]
-  traffic     = "dns.type in {'A' 'AAAA' 'CNAME' 'TXT'}"  # Correct DNS syntax
-}
+# Comment out the allow_all policy
+# resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
+#   account_id  = var.account_id
+#   name        = "Allow All Traffic"
+#   description = "Allow all traffic through WARP"
+#   precedence  = 1
+#   action      = "allow"
+#   filters     = ["dns"]
+#   traffic     = "dns.type in {'A' 'AAAA' 'CNAME' 'TXT'}"
+# }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   account_id  = var.account_id
