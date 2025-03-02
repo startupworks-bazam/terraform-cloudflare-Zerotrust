@@ -38,6 +38,7 @@ module "warp" {
   account_id = var.account_id
   warp_name  = "Prod WARP Configuration"
   azure_ad_provider_id = module.idp.entra_idp_id
+  security_teams_id = module.idp.security_teams_id
   depends_on = [cloudflare_zero_trust_gateway_settings.zero_trust, module.idp]
 }
 

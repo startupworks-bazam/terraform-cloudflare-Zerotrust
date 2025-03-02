@@ -40,15 +40,12 @@ resource "cloudflare_zero_trust_access_group" "red_team" {
   }
 }
 
-# Add this to terraform/modules/idp/main.tf
+# Correct security_teams group syntax
 resource "cloudflare_zero_trust_access_group" "security_teams" {
   account_id = var.account_id
   name = "Security Teams"
   
   include {
-    idp {
-      id = cloudflare_zero_trust_access_identity_provider.microsoft_entra_id.id
-      name = ["reddome_red_team", "reddome_blue_team"]
-    }
+    group = ["reddome_red_team", "reddome_blue_team"]
   }
 }

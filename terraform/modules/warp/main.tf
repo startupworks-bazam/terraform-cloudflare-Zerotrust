@@ -64,6 +64,7 @@ resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   traffic     = "any(http.request.uri.content_category[*] in {1 4 5 6 7})"
 }
 
+# Remove the module reference that's causing issues
 resource "cloudflare_zero_trust_gateway_policy" "warp_enrollment" {
   account_id  = var.account_id
   name        = "WARP Enrollment for Security Teams"
@@ -75,8 +76,6 @@ resource "cloudflare_zero_trust_gateway_policy" "warp_enrollment" {
   traffic     = "http.request.host eq 'reddome.cloudflareaccess.com'"
   
   identity = jsonencode({
-    groups = [module.idp.security_teams_id]
+    groups = [var.security_teams_id]
   })
-  
-  depends_on = [module.idp]
 }
