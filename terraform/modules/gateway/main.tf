@@ -9,13 +9,18 @@ terraform {
 
 resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
-  name       = var.location_name  # Use variable instead of hardcoded name
+  name       = var.location_name
   
   dynamic "networks" {
     for_each = var.networks
     content {
       network = networks.value
-      comment = "Managed by Terraform"
+    }
+  }
+  
+  endpoints {
+    ipv4 {
+      enabled = true
     }
   }
 }
