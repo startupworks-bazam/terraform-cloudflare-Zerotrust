@@ -84,6 +84,7 @@ resource "cloudflare_zero_trust_access_policy" "warp_enrollment_policy" {
   
   include {
     email = ["user@reddome.org"] # Use this for initial setup
-    # You can update this later to use Azure AD groups once integration is working
+    email_domain = ["company.com"]
+    azure_group  = ["reddome_red_team", "reddome_blue_team"]
   }
 }
