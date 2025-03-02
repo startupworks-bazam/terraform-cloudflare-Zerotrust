@@ -19,7 +19,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
   }
   
   input {
-    version = "10.0"  # Windows 10
+    version = "10.15.7"  # Windows 10
   }
 }
 

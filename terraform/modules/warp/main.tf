@@ -15,7 +15,7 @@ resource "cloudflare_zero_trust_gateway_policy" "allow_all" {
   action      = "allow"
   filters     = ["dns"]
   # Per documentation:
-  traffic     = "all(dns.type in {A, AAAA, CNAME, TXT})"
+  traffic = "(dns.type in {A AAAA CNAME TXT})"
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
@@ -26,7 +26,7 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   action      = "block"
   filters     = ["dns"]
   # Per documentation:
-  traffic     = "all(dns.content_category in {80})"
+  traffic = "(dns.content_category in {80})"
   rule_settings {
     block_page_enabled = true
     block_page_reason  = "Your administrator has blocked your request."
@@ -56,7 +56,7 @@ resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
   filters     = ["http"]
   
   # Block streaming applications
-  traffic = "any(application[*] in {'Netflix', 'Amazon Prime Video'})"
+  traffic = "(application in {NETFLIX AMAZON_PRIME})"
 }
 
 # CIPA Content Filtering
@@ -69,5 +69,5 @@ resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   filters     = ["dns", "http"]
   
   # Target CIPA filter categories
-  traffic = "any(dns.content_category[*] in {'Adult Content', 'Gambling', 'Weapons', 'Drugs', 'Pornography'})"
+  traffic = "(dns.content_category in {1 4 5 6 7})"
 }

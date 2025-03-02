@@ -11,13 +11,13 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
-  dynamic "networks" {
-    for_each = var.networks
-    content {
-      network = networks.value
-    }
+ networks {
+  for_each = var.networks
+  content {
+    network = each.value
   }
 }
+
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   account_id  = var.account_id
   name        = "Default Gateway Policy"
@@ -26,5 +26,5 @@ resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   action      = "allow"
   filters     = ["dns"]
   # Per documentation, use this format:
-  traffic     = "all(dns.type in {A, AAAA})"
+  traffic = "(dns.type in {A AAAA})"
 }
