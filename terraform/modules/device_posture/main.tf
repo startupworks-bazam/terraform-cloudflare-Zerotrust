@@ -7,7 +7,22 @@ terraform {
   }
 }
 
-# OS Version Check (keep this one as-is)
+# 1. Define the Intune integration first
+resource "cloudflare_zero_trust_device_posture_integration" "intune_integration" {
+  account_id = var.account_id
+  name       = "Microsoft Intune Integration"
+  type       = "intune"
+  interval   = "10m"
+  
+  config {
+    client_id     = var.intune_client_id
+    client_secret = var.intune_client_secret
+    customer_id   = var.azure_tenant_id
+  }
+}
+
+# 2. Define all the device posture rules
+# OS Version Check
 resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
   account_id  = var.account_id
   name        = "Windows OS Version Check"
@@ -23,28 +38,6 @@ resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
   }
 }
 
-# Fix the reference to os_version_windows
-resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
-  account_id  = var.account_id
-  name        = "Device Posture Check"
-  description = "Enforce device posture requirements"
-  precedence  = 1
-  action      = "isolate"
-  filters     = ["http", "https"]
-  
-  # Use a proper filter expression based on your working example
-  traffic     = "http.request.uri eq true"
-  
-  # Use device_posture instead of identity
-  device_posture = jsonencode({
-    integration_ids = [
-      cloudflare_zero_trust_device_posture_rule.os_version_windows.id,
-      cloudflare_zero_trust_device_posture_rule.disk_encryption.id,
-      cloudflare_zero_trust_device_posture_rule.intune_integration.id
-    ]
-  })
-}
-
 # Disk Encryption Check
 resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
   account_id  = var.account_id
@@ -54,21 +47,6 @@ resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
   
   match {
     platform = "windows"
-  }
-}
-
-# Add this Intune integration resource
-# For device_posture/main.tf
-resource "cloudflare_zero_trust_device_posture_integration" "intune_integration" {
-  account_id = var.account_id
-  name       = "Microsoft Intune Integration"
-  type       = "intune"
-  interval   = "10m"
-  
-  config {
-    client_id     = var.intune_client_id
-    client_secret = var.intune_client_secret
-    customer_id   = var.azure_tenant_id
   }
 }
 
@@ -102,4 +80,27 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration_mac" {
   input {
     id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
   }
+}
+
+# 3. Finally, define the policy that references all the rules
+resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
+  account_id  = var.account_id
+  name        = "Device Posture Check"
+  description = "Enforce device posture requirements"
+  precedence  = 1
+  action      = "isolate"
+  filters     = ["http", "https"]
+  
+  # Use a proper filter expression based on your working example
+  traffic     = "http.request.uri eq true"
+  
+  # Update the references to match the resource names you defined
+  device_posture = jsonencode({
+    integration_ids = [
+      cloudflare_zero_trust_device_posture_rule.os_version_windows.id,
+      cloudflare_zero_trust_device_posture_rule.disk_encryption.id,
+      cloudflare_zero_trust_device_posture_rule.intune_integration_windows.id,
+      cloudflare_zero_trust_device_posture_rule.intune_integration_mac.id
+    ]
+  })
 }
