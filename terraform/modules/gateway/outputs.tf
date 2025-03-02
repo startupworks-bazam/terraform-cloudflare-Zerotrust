@@ -1,3 +1,5 @@
-output "location_id" {
-  value = cloudflare_teams_location.gateway.id
-}
+account_id          = "YOUR_ACTUAL_CLOUDFLARE_ACCOUNT_ID"
+api_token           = "YOUR_ACTUAL_40_CHARACTER_CLOUDFLARE_API_TOKEN"
+azure_client_id     = "YOUR_ACTUAL_AZURE_CLIENT_ID"
+azure_client_secret = "YOUR_ACTUAL_AZURE_CLIENT_SECRET" 
+azure_directory_id  = "YOUR_ACTUAL_AZURE_DIRECTORY_ID"

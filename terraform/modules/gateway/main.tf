@@ -7,19 +7,16 @@ terraform {
   }
 }
 
-resource "cloudflare_teams_location" "gateway" {
+resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
-  dynamic "networks" {
-    for_each = var.networks
-    content {
-      network = networks.value
-    }
+  networks {
+    network = var.networks
   }
 }
 
-resource "cloudflare_teams_rule" "gateway_policy" {
+resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   account_id  = var.account_id
   name        = "Default Gateway Policy"
   description = "Default policy for gateway traffic"
