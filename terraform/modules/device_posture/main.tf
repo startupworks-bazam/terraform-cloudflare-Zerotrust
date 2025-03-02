@@ -6,11 +6,29 @@ terraform {
     }
   }
 }
-
-resource "cloudflare_zero_trust_device_posture_rule" "os_version" {
+# Microsoft Intune Integration with your Entra app
+resource "cloudflare_zero_trust_device_posture_rule" "intune_integration" {
   account_id  = var.account_id
-  name        = "OS Version Check"
-  description = "Ensure devices are running up-to-date OS versions"
+  name        = "Microsoft Intune Compliance"
+  description = "Verify device compliance with Intune policies via ZTNAPostureChecks app"
+  type        = "intune"
+  
+  match {
+    platform = "all"
+  }
+  
+  input {
+    client_id     = var.intune_client_id
+    client_secret = var.intune_client_secret
+    tenant_id     = var.azure_tenant_id
+  }
+}
+
+# OS Version Check
+resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
+  account_id  = var.account_id
+  name        = "Windows OS Version Check"
+  description = "Ensure Windows devices are running supported OS version"
   type        = "os_version"
   
   match {
@@ -18,7 +36,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "os_version" {
   }
   
   input {
-    version = ">=10.0"
+    version = "10.0"  # Windows 10
   }
 }
 
@@ -32,4 +50,16 @@ resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   device_posture = jsonencode({
     integration_ids = [cloudflare_zero_trust_device_posture_rule.os_version.id]
   })
+}
+
+# Disk Encryption Check
+resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
+  account_id  = var.account_id
+  name        = "Disk Encryption Check"
+  description = "Verify devices have disk encryption enabled"
+  type        = "disk_encryption"
+  
+  match {
+    platform = "windows"
+  }
 }
