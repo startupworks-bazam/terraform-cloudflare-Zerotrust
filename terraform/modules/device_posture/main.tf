@@ -1,4 +1,3 @@
-# In modules/device_posture/main.tf
 terraform {
   required_providers {
     cloudflare = {
@@ -8,7 +7,7 @@ terraform {
   }
 }
 
-resource "cloudflare_teams_device_posture_rule" "os_version" {
+resource "cloudflare_device_posture_rule" "os_version" {
   account_id  = var.account_id
   name        = "OS Version Check"
   description = "Ensure devices are running up-to-date OS versions"
@@ -30,8 +29,7 @@ resource "cloudflare_teams_rule" "device_posture" {
   precedence  = 1
   action      = "isolate"
   filters     = ["http", "https"]
-  
-  device_posture {
-    integration_ids = [cloudflare_teams_device_posture_rule.os_version.id]
-  }
+  device_posture = jsonencode({
+    integration_ids = [cloudflare_device_posture_rule.os_version.id]
+  })
 }

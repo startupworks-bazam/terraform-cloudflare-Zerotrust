@@ -14,12 +14,9 @@ resource "cloudflare_teams_rule" "allow_all" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  traffic {
-    any = true
-  }
+  traffic     = "any()"
 }
 
-# In modules/warp/main.tf
 resource "cloudflare_teams_rule" "block_malware" {
   account_id  = var.account_id
   name        = "Block Malware"
@@ -27,8 +24,5 @@ resource "cloudflare_teams_rule" "block_malware" {
   precedence  = 2
   action      = "block"
   filters     = ["dns"]
-  
-  traffic {
-    content_categories = ["80"]  # Security Threats category
-  }
+  traffic     = "security.category in {80}"  # Security Threats category
 }

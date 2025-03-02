@@ -7,10 +7,10 @@ terraform {
   }
 }
 
-resource "cloudflare_access_identity_provider" "azure_ad" {
+resource "cloudflare_zero_trust_access_identity_provider" "azure_ad" {
   account_id = var.account_id
   name       = "Azure AD"
-  type       = "azure"
+  type       = "azureAD"
   config {
     client_id     = var.azure_client_id
     client_secret = var.azure_client_secret

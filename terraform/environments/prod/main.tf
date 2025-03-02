@@ -3,7 +3,7 @@ terraform {
   cloud {
     organization = "reddome_academy"
     workspaces {
-      name = "terraform-cloudflare-Zerotrust"  # Updated workspace name
+      name = "terraform-cloudflare-Zerotrust"
     }
   }
 
@@ -20,22 +20,21 @@ provider "cloudflare" {
 }
 
 # Global Zero Trust configuration
-resource "cloudflare_teams_account" "zero_trust" {
+resource "cloudflare_zero_trust_gateway_settings" "zero_trust" {
   account_id = var.account_id
-  # Remove the name attribute as it's not supported
 }
 
 module "warp" {
   source = "../../modules/warp"
   account_id = var.account_id
   warp_name  = "Prod WARP Configuration"
-  depends_on = [cloudflare_teams_account.zero_trust]
+  depends_on = [cloudflare_zero_trust_gateway_settings.zero_trust]
 }
 
 module "device_posture" {
   source = "../../modules/device_posture"
   account_id = var.account_id
-  depends_on = [cloudflare_teams_account.zero_trust]
+  depends_on = [cloudflare_zero_trust_gateway_settings.zero_trust]
 }
 
 module "gateway" {
@@ -43,7 +42,7 @@ module "gateway" {
   account_id    = var.account_id
   location_name = "Prod Gateway"
   networks      = ["192.168.1.0/24"]
-  depends_on    = [cloudflare_teams_account.zero_trust]
+  depends_on    = [cloudflare_zero_trust_gateway_settings.zero_trust]
 }
 
 module "access" {
@@ -52,7 +51,7 @@ module "access" {
   app_name       = "Example App"
   app_domain     = "app.example.com"
   allowed_emails = ["user@example.com"]
-  depends_on     = [cloudflare_teams_account.zero_trust]
+  depends_on     = [cloudflare_zero_trust_gateway_settings.zero_trust]
 }
 
 module "idp" {
@@ -61,5 +60,5 @@ module "idp" {
   azure_client_id     = var.azure_client_id
   azure_client_secret = var.azure_client_secret
   azure_directory_id  = var.azure_directory_id
-  depends_on = [cloudflare_teams_account.zero_trust]
+  depends_on = [cloudflare_zero_trust_gateway_settings.zero_trust]
 }

@@ -1,4 +1,3 @@
-# In modules/gateway/main.tf
 terraform {
   required_providers {
     cloudflare = {
@@ -11,17 +10,21 @@ terraform {
 resource "cloudflare_teams_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
-  networks   = var.networks
+  
+  dynamic "networks" {
+    for_each = var.networks
+    content {
+      network = networks.value
+    }
+  }
 }
 
 resource "cloudflare_teams_rule" "gateway_policy" {
   account_id  = var.account_id
   name        = "Default Gateway Policy"
+  description = "Default policy for gateway traffic"
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  
-  traffic {
-    protocols = ["any"]
-  }
+  traffic     = "any()"
 }
