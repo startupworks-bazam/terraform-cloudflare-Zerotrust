@@ -72,7 +72,6 @@ resource "cloudflare_zero_trust_device_posture_integration" "intune_integration"
   }
 }
 
-# Then uncomment and update the Intune posture rule
 resource "cloudflare_zero_trust_device_posture_rule" "intune_integration" {
   account_id  = var.account_id
   name        = "Microsoft Intune Compliance"
@@ -83,6 +82,9 @@ resource "cloudflare_zero_trust_device_posture_rule" "intune_integration" {
     platform = "all"
   }
   
-  # Use the correct attribute name
-  integration_id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
+  # For Intune integration, we need to use input block with correct attribute
+  input {
+    # This is the correct format - the ID goes inside the input block
+    id = cloudflare_zero_trust_device_posture_integration.intune_integration.id
+  }
 }
