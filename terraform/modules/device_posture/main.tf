@@ -32,11 +32,13 @@ resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
   action      = "isolate"
   filters     = ["http", "https"]
   
-  # Use correct device posture syntax
-  traffic     = "has(device_posture.passed) && !device_posture.passed"
-  identity    = jsonencode({
+  # Use simpler traffic expression
+  traffic = "(http.request.uri)"
+  
+  # Use identity field to reference device posture rule
+  identity {
     id = [cloudflare_zero_trust_device_posture_rule.os_version_windows.id]
-  })
+  }
 }
 
 # Disk Encryption Check

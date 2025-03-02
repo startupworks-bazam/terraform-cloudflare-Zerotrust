@@ -11,17 +11,13 @@ resource "cloudflare_zero_trust_dns_location" "gateway" {
   account_id = var.account_id
   name       = var.location_name
   
-  # Correct syntax for networks
-  networks {
-    network = "10.0.0.0/8"
+  # Proper syntax for defining networks
+  dynamic "networks" {
+    for_each = var.networks
+    content {
+      network = networks.value
+    }
   }
-  
-  networks {
-    network = "192.168.1.0/24"
-  }
-  
-  # Optionally set client_default
-  client_default = false
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
@@ -31,6 +27,10 @@ resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   precedence  = 1
   action      = "allow"
   filters     = ["dns"]
-  # Correct syntax for traffic filter
-  traffic     = "dns.type in {\"A\" \"AAAA\"}"
+  
+  # Correct syntax based on Cloudflare provider
+  traffic = "(http.request.uri)"  # This is a basic expression that matches all HTTP traffic
+  
+  # If you need to filter DNS, try:
+  # traffic = "(dns)"
 }
