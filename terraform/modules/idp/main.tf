@@ -1,19 +1,21 @@
+# terraform/modules/idp/main.tf
 terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 4.0"
+      version = ">=4.40.0"
     }
   }
 }
 
-resource "cloudflare_zero_trust_access_identity_provider" "azure_ad" {
+resource "cloudflare_zero_trust_access_identity_provider" "microsoft_entra_id" {
   account_id = var.account_id
-  name       = "Azure AD"
+  name       = "Microsoft Entra ID"
   type       = "azureAD"
   config {
-    client_id     = var.azure_client_id
-    client_secret = var.azure_client_secret
-    directory_id  = var.azure_directory_id
+    client_id      = var.azure_client_id
+    client_secret  = var.azure_client_secret
+    directory_id   = var.azure_directory_id
+    support_groups = true
   }
 }
