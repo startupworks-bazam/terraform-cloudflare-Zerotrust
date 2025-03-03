@@ -117,3 +117,27 @@ resource "cloudflare_zero_trust_gateway_policy" "block_file_uploads_unapproved_a
   # Using matches operator instead of contains
   traffic     = "http.request.uri matches \".*upload.*\""
 }
+
+resource "cloudflare_zero_trust_device_profiles" "security_teams" {
+  account_id  = var.account_id
+  name        = "Security Teams WARP Configuration"
+  description = "Strict WARP settings for Security Teams"
+  support_url = "https://help.teams.cloudflare.com"
+
+  # Strict security configurations
+  allow_mode_switch     = false
+  allowed_to_leave      = false
+  allow_updates         = true
+  auto_connect          = 180
+  captive_portal        = 180
+  default               = false
+  disable_auto_fallback = true
+  enabled               = true
+  exclude_office_ips    = true
+  switch_locked         = true
+
+  # Match only security teams groups
+  match = "any(identity.groups.name[*] in {\"Security Teams\"})"
+  
+  precedence = 10
+}
