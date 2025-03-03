@@ -114,6 +114,6 @@ resource "cloudflare_zero_trust_gateway_policy" "block_file_uploads_unapproved_a
   action      = "block"
   filters     = ["http"]
   
-  # Simple expression targeting upload endpoints
-  traffic     = "http.request.uri contains \"upload\""
+  # Using matches operator instead of contains
+  traffic     = "http.request.uri matches \".*upload.*\""
 }
