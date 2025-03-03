@@ -30,7 +30,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
   description = "Ensure Windows devices are running supported OS version"
 
   input {
-    minimum_version = "10.0.0"
+    minimum_version = "10.7.1"
     operator        = ">"
   }
 
