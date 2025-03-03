@@ -103,10 +103,8 @@ resource "cloudflare_zero_trust_gateway_policy" "block_all_securityrisks" {
   # Use security categories for known threats
   traffic     = "any(dns.security_category[*] in {3 4 7 9 10 11 13 17 19 20 21})"
   
-  # Reference the security_teams group - this will apply the policy to members of this group
-  identity = jsonencode({
-    groups = [var.security_teams_id]
-  })
+  # The identity field needs to be formatted as a string expression, not JSON
+  identity    = "identity.groups.id eq \"${var.security_teams_id}\""
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_file_uploads_unapproved_apps" {
@@ -117,11 +115,9 @@ resource "cloudflare_zero_trust_gateway_policy" "block_file_uploads_unapproved_a
   action      = "block"
   filters     = ["http"]
   
-  # Traffic expression for file types and applications
-  traffic     = "any(http.upload.file.types[*] in {\"doc\", \"docx\", \"docm\", \"pdf\", \"rtf\", \"xls\", \"xlsx\", \"xlsm\", \"ppt\", \"pptx\", \"pptm\"}) and any(app.name[*] in {\"Google Drive\", \"1fichier\", \"Bajoo\", \"Google Play Store\", \"AirDroid\", \"Box\", \"Cyberduck\", \"Dropbox\", \"iCloud\", \"WeTransfer\", \"Imgur\", \"Egnyte\", \"FileCloud\", \"pCloud\", \"SendAnywhere\", \"SHAREit\", \"Workplace\", \"Xender\", \"Zapya\"})"
+  # File types and app names need single quotes within the expression
+  traffic     = "any(http.upload.file.types[*] in {'doc' 'docx' 'docm' 'pdf' 'rtf' 'xls' 'xlsx' 'xlsm' 'ppt' 'pptx' 'pptm'}) and any(app.name[*] in {'Google Drive' '1fichier' 'Bajoo' 'Google Play Store' 'AirDroid' 'Box' 'Cyberduck' 'Dropbox' 'iCloud' 'WeTransfer' 'Imgur' 'Egnyte' 'FileCloud' 'pCloud' 'SendAnywhere' 'SHAREit' 'Workplace' 'Xender' 'Zapya'})"
   
-  # Reference the security_teams group
-  identity = jsonencode({
-    groups = [var.security_teams_id]
-  })
+  # Use the same string expression format for identity
+  identity    = "identity.groups.id eq \"${var.security_teams_id}\""
 }
