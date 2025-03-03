@@ -30,8 +30,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
   description = "Ensure Windows devices are running supported OS version"
 
   input {
-    minimum_version = "10.7.1"
-    operator        = ">"
+    version = "10.0.0"
   }
 
   match {
@@ -59,8 +58,8 @@ resource "cloudflare_zero_trust_device_posture_rule" "antivirus" {
   description = "Ensure antivirus is running and up to date"
 
   input {
-    running  = true
-    id       = "antivirus"
+    running = true
+    name    = "Windows Defender"
   }
 
   match {
@@ -76,8 +75,8 @@ resource "cloudflare_zero_trust_device_posture_rule" "firewall" {
   description = "Ensure firewall is enabled"
 
   input {
-    running  = true
-    id       = "firewall"
+    running = true
+    name    = "Windows Firewall"
   }
 
   match {
