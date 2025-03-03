@@ -84,21 +84,21 @@ resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
 #   }
 # }
 
-# Comment out the device_posture policy
-# resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
-#   account_id  = var.account_id
-#   name        = "Device Posture Check"
-#   description = "Enforce device posture requirements"
-#   precedence  = 1
-#   action      = "isolate"
-#   filters     = ["http", "https"]
-#   
-#   traffic     = "http.request.hostname matches '.*'"
-#   
-#   device_posture = jsonencode({
-#     integration_ids = [
-#       cloudflare_zero_trust_device_posture_rule.os_version_windows.id,
-#       cloudflare_zero_trust_device_posture_rule.disk_encryption.id
-#     ]
-#   })
-# }
+resource "cloudflare_zero_trust_gateway_policy" "device_posture" {
+  account_id  = var.account_id
+  name        = "Device Posture Check"
+  description = "Enforce device posture requirements"
+  precedence  = 1
+  action      = "isolate"
+  filters     = ["http"]
+  traffic     = "http.request.uri matches \".*\""
+  
+  identity {
+    groups = [var.security_teams_id]
+  }
+  
+  device_posture = jsonencode([
+    cloudflare_zero_trust_device_posture_rule.os_version_windows.id,
+    cloudflare_zero_trust_device_posture_rule.disk_encryption.id
+  ])
+}

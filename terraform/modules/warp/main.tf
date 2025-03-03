@@ -26,6 +26,10 @@ resource "cloudflare_zero_trust_gateway_policy" "block_malware" {
   action      = "block"
   filters     = ["dns"]
   traffic     = "any(dns.content_category[*] in {80})"  # Corrected traffic expression
+  
+  identity {
+    groups = [var.security_teams_id]
+  }
 }
 
 # Block Security Threats
@@ -39,6 +43,10 @@ resource "cloudflare_zero_trust_gateway_policy" "block_security_threats" {
   
   # Using proper security category syntax
   traffic = "any(dns.security_category[*] in {80})"  # Security Threats category
+  
+  identity {
+    groups = [var.security_teams_id]
+  }
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
@@ -51,6 +59,10 @@ resource "cloudflare_zero_trust_gateway_policy" "block_streaming" {
   
   # Use http.request.uri categories instead of application field
   traffic     = "any(http.request.uri.content_category[*] in {96})"  # 96 is streaming media category
+  
+  identity {
+    groups = [var.security_teams_id]
+  }
 }
 
 resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
@@ -116,4 +128,18 @@ resource "cloudflare_zero_trust_gateway_policy" "block_file_uploads_unapproved_a
   
   # Using matches operator instead of contains
   traffic     = "http.request.uri matches \".*upload.*\""
+}
+
+resource "cloudflare_zero_trust_gateway_policy" "block_file_uploads" {
+  account_id  = var.account_id
+  name        = "Block File Uploads"
+  description = "Block file uploads to unapproved applications"
+  precedence  = 3
+  action      = "block"
+  filters     = ["http"]
+  traffic     = "http.request.uri matches \".*upload.*\""
+  
+  identity {
+    groups = [var.security_teams_id]
+  }
 }

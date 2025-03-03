@@ -14,3 +14,8 @@ variable "networks" {
   type        = list(string)
   default     = []
 }
+
+variable "security_teams_id" {
+  description = "ID of the security teams access group"
+  type        = string
+}
