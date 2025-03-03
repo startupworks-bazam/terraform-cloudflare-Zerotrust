@@ -7,30 +7,14 @@ terraform {
   }
 }
 
-# Comment out the DNS location
-# resource "cloudflare_zero_trust_dns_location" "gateway" {
-#   account_id = var.account_id
-#   name       = var.location_name
-#   
-#   endpoints {
-#     ipv4 {
-#       enabled = true
-#     }
-#     ipv6 {
-#       enabled = false
-#     }
-#     doh {
-#       enabled = false
-#     }
-#     dot {
-#       enabled = false
-#     }
-#   }
-#   
-#   networks {
-#     network = "100.64.0.0/24"
-#   }
-# }
+resource "cloudflare_zero_trust_dns_location" "gateway" {
+  account_id = var.account_id
+  name       = var.location_name
+  
+  networks {
+    network = var.networks[0]
+  }
+}
 
 resource "cloudflare_zero_trust_gateway_policy" "gateway_policy" {
   account_id  = var.account_id
