@@ -60,9 +60,12 @@ resource "cloudflare_zero_trust_gateway_policy" "cipa_filter" {
   precedence  = 3
   action      = "block"
   filters     = ["dns", "http"]
-  
-  # Use array syntax for content categories
   traffic     = "any(http.request.uri.content_category[*] in {1 4 5 6 7})"
+
+  identity {
+    provider = var.azure_ad_provider_id
+    groups   = [var.security_teams_id]
+  }
 }
 
 resource "cloudflare_zero_trust_access_application" "warp_enrollment_app" {
