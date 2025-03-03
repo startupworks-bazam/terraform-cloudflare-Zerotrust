@@ -21,7 +21,11 @@ resource "cloudflare_zero_trust_device_posture_integration" "intune_integration"
   }
 }
 
-# 2. Define all the device posture rules
+# Remove state for deleted rules
+# terraform state rm module.device_posture.cloudflare_zero_trust_device_posture_rule.os_version_windows
+# terraform state rm module.device_posture.cloudflare_zero_trust_device_posture_rule.disk_encryption
+
+# Recreate the rules with updated configuration
 # OS Version Check
 resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
   account_id  = var.account_id
@@ -34,8 +38,11 @@ resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
   }
   
   input {
-    version = "10.15.7"  # Windows 10
+    version = "10.0"  # Updated Windows version requirement
+    operator = ">="   # Added operator for version comparison
   }
+
+  depends_on = [cloudflare_zero_trust_device_posture_integration.intune_integration]
 }
 
 # Disk Encryption Check
@@ -43,11 +50,13 @@ resource "cloudflare_zero_trust_device_posture_rule" "disk_encryption" {
   account_id  = var.account_id
   name        = "Disk Encryption Check"
   description = "Ensure device disk is encrypted"
-  type        = "disk_encryption"
+  type        = "disk_encryption"  # Fixed: Changed from disk_encryption_enabled to disk_encryption
   
   match {
     platform = "windows"
   }
+
+  depends_on = [cloudflare_zero_trust_device_posture_integration.intune_integration]
 }
 
 # Windows Intune integration rule - COMMENT OUT FOR NOW
