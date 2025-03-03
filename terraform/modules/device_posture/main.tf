@@ -24,17 +24,17 @@ resource "cloudflare_zero_trust_device_posture_integration" "intune_integration"
 # 2. Define all the device posture rules
 # OS Version Check
 resource "cloudflare_zero_trust_device_posture_rule" "os_version_windows" {
-  account_id = var.account_id
-  name       = "Windows OS Version Check"
-  type       = "os_version"
+  account_id  = var.account_id
+  name        = "Windows OS Version Check"
   description = "Ensure Windows devices are running supported OS version"
-
-  input {
-    version = "10.0.19041"  # Windows 10 version 2004 (May 2020 Update)
-  }
-
+  type        = "os_version"
+  
   match {
     platform = "windows"
+  }
+  
+  input {
+    version = "10.15.7"  # Windows 10
   }
 }
 
