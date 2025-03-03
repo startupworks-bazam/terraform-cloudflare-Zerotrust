@@ -89,3 +89,39 @@ resource "cloudflare_zero_trust_access_policy" "warp_enrollment_policy" {
     }
   }
 }
+
+# Added security_teams
+
+resource "cloudflare_zero_trust_gateway_policy" "block_all_securityrisks" {
+  account_id  = var.account_id
+  name        = "Block_all_securityrisks_known_for_Cloudflare"
+  description = "Block known threats such as Command & Control, Botnet and Malware based on Cloudflare's threat intelligence."
+  precedence  = 1
+  action      = "block"
+  filters     = ["dns", "http"]
+  
+  # Use security categories for known threats
+  traffic     = "any(dns.security_category[*] in {3 4 7 9 10 11 13 17 19 20 21})"
+  
+  # Reference the security_teams group - this will apply the policy to members of this group
+  identity = jsonencode({
+    groups = [var.security_teams_id]
+  })
+}
+
+resource "cloudflare_zero_trust_gateway_policy" "block_file_uploads_unapproved_apps" {
+  account_id  = var.account_id
+  name        = "Block_file_uploads_to_Unapproved_Applications"
+  description = "Block file uploads of specific types to unapproved applications for Security Teams"
+  precedence  = 2
+  action      = "block"
+  filters     = ["http"]
+  
+  # Traffic expression for file types and applications
+  traffic     = "any(http.upload.file.types[*] in {\"doc\", \"docx\", \"docm\", \"pdf\", \"rtf\", \"xls\", \"xlsx\", \"xlsm\", \"ppt\", \"pptx\", \"pptm\"}) and any(app.name[*] in {\"Google Drive\", \"1fichier\", \"Bajoo\", \"Google Play Store\", \"AirDroid\", \"Box\", \"Cyberduck\", \"Dropbox\", \"iCloud\", \"WeTransfer\", \"Imgur\", \"Egnyte\", \"FileCloud\", \"pCloud\", \"SendAnywhere\", \"SHAREit\", \"Workplace\", \"Xender\", \"Zapya\"})"
+  
+  # Reference the security_teams group
+  identity = jsonencode({
+    groups = [var.security_teams_id]
+  })
+}

@@ -21,31 +21,15 @@ resource "cloudflare_zero_trust_access_identity_provider" "microsoft_entra_id" {
   }
 }
 
-# Basic access groups without Azure integration for now
-resource "cloudflare_zero_trust_access_group" "blue_team" {
-  account_id = var.account_id
-  name       = "Blue Team"
-  
-  include {
-    email = ["user@reddome.org"]
-  }
-}
-
-resource "cloudflare_zero_trust_access_group" "red_team" {
-  account_id = var.account_id
-  name       = "Red Team"
-  
-  include {
-    email = ["user@reddome.org"]
-  }
-}
-
-# Correct security_teams group syntax
+# Replace the current security_teams group with this
 resource "cloudflare_zero_trust_access_group" "security_teams" {
   account_id = var.account_id
   name = "Security Teams"
   
   include {
-    email = ["user@reddome.org"]  # Same as other groups
+    azure {
+      id = ["a3008467-e39c-43f6-a7ad-4769bcefe01e", "5a071d2a-8597-4096-a6b3-1d702cfab3c4"]
+      identity_provider_id = cloudflare_zero_trust_access_identity_provider.microsoft_entra_id.id
+    }
   }
 }
