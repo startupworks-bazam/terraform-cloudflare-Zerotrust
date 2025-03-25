@@ -53,9 +53,9 @@ module "gateway" {
 module "access" {
   source = "../../modules/access"
   account_id     = var.account_id
-  app_name       = "Example App"
-  app_domain     = "app.reddome.org"  # Replace with a domain you own in Cloudflare
-  allowed_emails = ["user@reddome.org"]
+  app_name       = "StartupWorks"
+  app_domain     = "app.StartupWorks.io"  # Replace with a domain you own in Cloudflare
+  allowed_emails = ["user@StartupWorks.io"]
   depends_on     = [cloudflare_zero_trust_gateway_settings.zero_trust]
 }
 
