@@ -1,7 +1,7 @@
 # In environments/prod/main.tf
 terraform {
   cloud {
-    organization = "reddome_academy"
+    organization = "StartupWorks"
     workspaces {
       name = "terraform-cloudflare-Zerotrust"
     }
